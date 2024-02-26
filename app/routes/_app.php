@@ -1,4 +1,5 @@
 <?php
+app()->config('debug', false);
 
 use Leaf\Helpers\Authentication;
 
@@ -9,11 +10,12 @@ app()->registerMiddleware('verify-token', function () {
         exit(response()->json($errors));
     }
 });
-
+app()->get('/', 'LoginsController@index');
 app()->group('/auth', function () {
-    app()->get('/', 'LoginsController@index');
+    app()->post('/', 'LoginsController@index');
     app()->post('/registrarcliente', ['middleware' => 'verify-token', 'LoginsController@registrarCliente']);
     app()->post('/registrarusuario', ['middleware' => 'verify-token', 'LoginsController@registrarUsuario']);
+    app()->post('/prueba', ['middleware' => 'verify-token', 'LoginsController@registrarUsuario']);
 });
 
 app()->group('/usuarios', ['middleware' => 'verify-token', function () {
