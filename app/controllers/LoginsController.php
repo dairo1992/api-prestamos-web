@@ -4,16 +4,14 @@ namespace App\Controllers;
 
 use App\Models\Auth;
 
-
-
-
 class LoginsController extends Controller
 {
   public function index()
   {
+
     $validatedData = request()->validate([
       'USUARIO' => ['required'],
-      'PASSWORD' => ['required'],
+      'PASSWORD' => ['required', 'min:5'],
     ]);
     if (!$validatedData) {
       response()->json(request()->errors());
@@ -47,7 +45,7 @@ class LoginsController extends Controller
       'CLIENTE' => ['required', 'number'],
       'NOMBRE' => ['required'],
       'USUARIO' => ['required'],
-      'CONTRASENA' => ['required'],
+      'PASSWORD' => ['required'],
       'TIPO' => ['required', 'text', 'max:1'],
     ]);
     if (!$validatedData) {
@@ -55,6 +53,38 @@ class LoginsController extends Controller
     } else {
       $datos = request()->body();
       Auth::registrarUsuario($datos);
+    }
+  }
+
+  public function resetPassword()
+  {
+    $validatedData = request()->validate([
+      'ID_USUARIO' => ['required'],
+      'PASSWORD' => ['required', 'min:5'],
+      'PASSWORD_CONFIRM' => ['required', 'min:5'],
+    ]);
+    if (!$validatedData) {
+      response()->json(request()->errors());
+    } else {
+      $datos = request()->body();
+      if ($datos['PASSWORD'] === $datos['PASSWORD_CONFIRM']) {
+        Auth::resetPassword($datos);
+      } else {
+        response()->json(["STATUS" => false, "RESP" => "LAS CONTRASEÑAS NO COINCIDEN"]);
+      }
+    }
+  }
+
+  public function validaToken()
+  {
+    $validatedData = request()->validate([
+      'TOKEN' => ['required']
+    ]);
+    if (!$validatedData) {
+      response()->json(false);
+    } else {
+      $datos = request()->body();
+      Auth::validaToken($datos);
     }
   }
 }

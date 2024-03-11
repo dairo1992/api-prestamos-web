@@ -10,12 +10,13 @@ app()->registerMiddleware('verify-token', function () {
         exit(response()->json($errors));
     }
 });
-app()->get('/', 'LoginsController@index');
-app()->group('/auth', function () {
+
+app()->group('/', function () {
     app()->post('/', 'LoginsController@index');
     app()->post('/registrarcliente', ['middleware' => 'verify-token', 'LoginsController@registrarCliente']);
     app()->post('/registrarusuario', ['middleware' => 'verify-token', 'LoginsController@registrarUsuario']);
-    app()->post('/prueba', ['middleware' => 'verify-token', 'LoginsController@registrarUsuario']);
+    app()->post('/reset-password', ['middleware' => 'verify-token', 'LoginsController@resetPassword']);
+    app()->post('/valida-token', 'LoginsController@validaToken');
 });
 
 app()->group('/usuarios', ['middleware' => 'verify-token', function () {
@@ -28,3 +29,7 @@ app()->group('/usuarios', ['middleware' => 'verify-token', function () {
     app()->post("/editar-cliente", 'UsuariosController@editarCliente');
     app()->post("/estado-cliente", 'UsuariosController@CambiarEstadoCliente');
 }]);
+
+app()->group('/', function () {
+    app()->get("/excel", 'FilesController@conectFtp');
+});

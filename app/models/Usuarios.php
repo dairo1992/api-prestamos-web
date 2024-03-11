@@ -22,10 +22,10 @@ class Usuarios extends Model
 
     static function editarUsuario($datos)
     {
-        $resp = db()->query('CALL EDITAR_USUARIO(?,?,?,?)')->bind(
+        $resp = db()->query('CALL EDITAR_USUARIO(?,?,?)')->bind(
             $datos["ID"],
             $datos["NOMBRE"],
-            $datos["CONTRASENA"],
+            // $datos["CONTRASENA"],
             $datos["TIPO"],
         )->obj();
         response()->json(json_decode($resp->JSON_ROW_OUT));
@@ -34,9 +34,10 @@ class Usuarios extends Model
 
     static function CambiarEstadoUsuario($datos)
     {
-        $resp = db()->query('CALL CAMBIAR_ESTADO_USUARIO(?,?)')->bind(
+        $estado = $datos["ESTADO"] == "A" ? "I" : "A";
+        $resp = db()->query('CALL ACTIVAR_INACTIVAR_USU(?,?)')->bind(
             $datos["ID"],
-            $datos["ESTADO"]
+            $estado
         )->obj();
         response()->json(json_decode($resp->JSON_ROW_OUT));
         db()->close();
@@ -71,9 +72,10 @@ class Usuarios extends Model
 
     static function CambiarEstadoCliente($datos)
     {
+        $estado = $datos["ESTADO"] == "A" ? "I" : "A";
         $resp = db()->query('CALL CAMBIAR_ESTADO_CLIENTE(?,?)')->bind(
             $datos["ID"],
-            $datos["ESTADO"]
+            $estado
         )->obj();
         response()->json(json_decode($resp->JSON_ROW_OUT));
         db()->close();

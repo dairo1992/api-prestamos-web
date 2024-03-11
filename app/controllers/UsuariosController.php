@@ -31,7 +31,7 @@ class UsuariosController extends Controller
         $validatedData = request()->validate([
             "ID" => ['required', 'number'],
             "NOMBRE" => ['required', 'text'],
-            "CONTRASENA" => ['required', 'min:5'],
+            // "CONTRASENA" => ['required', 'min:5'],
             "TIPO" => ['required', 'text', 'max:1'],
         ]);
         if (!$validatedData) {

@@ -28,7 +28,7 @@ return [
     |   non-function value of the origin option) as the second.
     |
     */
-    'origin' => '*',
+    'origin' => '*', //origin
 
     /*
     |--------------------------------------------------------------------------
