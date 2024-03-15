@@ -45,9 +45,17 @@ class Usuarios extends Model
 
     static function obtenerClientes()
     {
-        $resp = db()->query('CALL OBTENER_CLIENTES()')->all();
-        response()->json($resp);
-        db()->close();
+        // $resp = db()->query('CALL OBTENER_CLIENTES()')->all();
+        // response()->json($resp);
+        // db()->close();
+        try {
+            $resp = db()->query("CALL OBTENER_CLIENTES()")->obj();
+            db()->close();
+            // return $resp;
+            return json_decode($resp->JSON_ROW_OUT);
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
     }
 
     static function obtenerCliente($id)

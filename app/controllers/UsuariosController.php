@@ -59,7 +59,8 @@ class UsuariosController extends Controller
 
     public function obtenerClientes()
     {
-        Usuarios::obtenerClientes();
+        $resp = Usuarios::obtenerClientes();
+        response()->json($resp);
     }
 
     public function obtenerCliente()

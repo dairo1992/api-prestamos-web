@@ -25,11 +25,13 @@ class LoginsController extends Controller
   {
     $validatedData = request()->validate([
       'NOMBRE' => ['required'],
-      'DOCUMENTO' => ['required', 'number'],
+      'TIPO_DOCUMENTO' => ['required', 'min:2', 'max:2'],
+      'DOCUMENTO' => ['required', 'number', 'min:5'],
       'NEGOCIO' => ['required'],
-      'LICENCIAS' => ['required', 'number'],
-      'FECHA_INICO' => ['required', 'date'],
-      'FECHA_FIN' => ['required', 'date']
+      'LICENCIA' => ['required', 'number', 'min:1', 'max:2'],
+      'FECHA_INICIO' => ['required', 'date'],
+      'FECHA_FIN' => ['required', 'date'],
+      'PASSWORD' => ['required']
     ]);
     if (!$validatedData) {
       response()->json(request()->errors());

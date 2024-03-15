@@ -3,7 +3,8 @@
 namespace App\Controllers;
 
 use Leaf\FS;
-use PhpParser\Node\Stmt\TryCatch;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+// use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 
 class FilesController extends Controller
 {
@@ -30,19 +31,22 @@ class FilesController extends Controller
 
     public function conectFtp()
     {
-        // $ftp_server = "127.0.0.1";
-        $server = "127.0.0.1";
-        // $ftp_user_name = "dairo";
-        // $ftp_user_pass = "123456";
-        // $file = ""; //tobe uploaded
-        // $remote_file = "";
-        // $conn_id = ftp_connect($ftp_server) or die("Error");
-        // $login_result = ftp_login($conn_id, $ftp_user_name, $ftp_user_pass);
-
         try {
-            ftp_connect($server);
-        } catch (\Throwable $e) {
-            response()->json($e->getMessage());
+            $path = 'temp/file.csv';
+            # open the file
+            $reader = ReaderEntityFactory::createXLSXReader();
+            $reader->open($path);
+            # read each cell of each row of each sheet
+            foreach ($reader->getSheetIterator() as $sheet) {
+                foreach ($sheet->getRowIterator() as $row) {
+                    foreach ($row->getCells() as $cell) {
+                        var_dump($cell->getValue());
+                    }
+                }
+            }
+            $reader->close();
+        } catch (\Throwable $th) {
+            response()->json($th->getMessage());
         }
     }
 }

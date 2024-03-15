@@ -47,14 +47,15 @@ class Auth extends Model
 
     static function registrarCliente($datos)
     {
-        $users = db()->query('CALL REGISTRAR_CLIENTE(?,?,?,?,?,?,?)')->bind(
+        $users = db()->query('CALL NUEVO_CLIENTE(?,?,?,?,?,?,?,?)')->bind(
             $datos['NOMBRE'],
+            $datos['TIPO_DOCUMENTO'],
             $datos['DOCUMENTO'],
             $datos['NEGOCIO'],
-            $datos['LICENCIAS'],
-            $datos['FECHA_INICO'],
+            $datos['LICENCIA'],
+            $datos['FECHA_INICIO'],
             $datos['FECHA_FIN'],
-            Password::hash($datos['DOCUMENTO']),
+            Password::hash($datos['PASSWORD']),
         )->obj();
         response()->json(json_decode($users->JSON_ROW_OUT));
         db()->close();

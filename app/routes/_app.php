@@ -4,14 +4,18 @@ app()->config('debug', false);
 use Leaf\Helpers\Authentication;
 
 app()->registerMiddleware('verify-token', function () {
-    $data = Authentication::validateToken(_env('APP_KEY'));
-    if (!$data) {
-        $errors = Authentication::errors();
-        exit(response()->json($errors));
-    }
+    // $data = Authentication::validateToken(_env('APP_KEY'));
+    // if (!$data) {
+    //     $errors = Authentication::errors();
+    //     exit(response()->json($errors));
+    // }
+    return true;
 });
 
 app()->group('/', function () {
+    app()->get('/', function () {
+        response()->json(["message" => "Bienvenido"]);
+    });
     app()->post('/', 'LoginsController@index');
     app()->post('/registrarcliente', ['middleware' => 'verify-token', 'LoginsController@registrarCliente']);
     app()->post('/registrarusuario', ['middleware' => 'verify-token', 'LoginsController@registrarUsuario']);
@@ -19,7 +23,7 @@ app()->group('/', function () {
     app()->post('/valida-token', 'LoginsController@validaToken');
 });
 
-app()->group('/usuarios', ['middleware' => 'verify-token', function () {
+app()->group('/', ['middleware' => 'verify-token', function () {
     app()->get("/", 'UsuariosController@index');
     app()->get("/usuario", 'UsuariosController@obtenerUsuario');
     app()->post("/editar-usuario", 'UsuariosController@editarUsuario');
@@ -32,4 +36,6 @@ app()->group('/usuarios', ['middleware' => 'verify-token', function () {
 
 app()->group('/', function () {
     app()->get("/excel", 'FilesController@conectFtp');
+    app()->get("/tipodoc", 'UtilitiesController@obtenerTipoDocumento');
+    app()->get("/tipolicencia", 'UtilitiesController@obtenerTipoLicencia');
 });
