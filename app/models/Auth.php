@@ -47,31 +47,51 @@ class Auth extends Model
 
     static function registrarCliente($datos)
     {
-        $users = db()->query('CALL NUEVO_CLIENTE(?,?,?,?,?,?,?,?)')->bind(
-            $datos['NOMBRE'],
-            $datos['TIPO_DOCUMENTO'],
-            $datos['DOCUMENTO'],
-            $datos['NEGOCIO'],
-            $datos['LICENCIA'],
-            $datos['FECHA_INICIO'],
-            $datos['FECHA_FIN'],
-            Password::hash($datos['PASSWORD']),
-        )->obj();
-        response()->json(json_decode($users->JSON_ROW_OUT));
-        db()->close();
+        try {
+            date_default_timezone_set('UTC');
+
+            $users = db()->query('CALL NUEVO_CLIENTE(?,?,?,?,?,?,?,?)')->bind(
+                $datos['NOMBRE'],
+                $datos['TIPO_DOCUMENTO'],
+                $datos['DOCUMENTO'],
+                $datos['NEGOCIO'],
+                $datos['LICENCIA'],
+                $datos['FECHA_INICIO'],
+                $datos['FECHA_FIN'],
+                Password::hash($datos['DOCUMENTO']),
+            )->obj();
+            return response()->json(json_decode($users->JSON_ROW_OUT));
+            db()->close();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
     }
 
     static function registrarUsuario($datos)
     {
-        $users = db()->query('CALL REGISTRAR_USUARIO(?,?,?,?,?)')->bind(
-            $datos['CLIENTE'],
-            $datos['NOMBRE'],
-            $datos['USUARIO'],
-            Password::hash($datos['PASSWORD']),
-            $datos['TIPO']
-        )->obj();
-        response()->json(json_decode($users->JSON_ROW_OUT));
-        db()->close();
+        try {
+            $users = db()->query('CALL REGISTRAR_USUARIO(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')->bind(
+                intval($datos['CLIENTE']),
+                $datos['NOMBRE'],
+                $datos['TIPO_DOCUMENTO'],
+                $datos['DOCUMENTO'],
+                $datos['DIRECCION'] == null ? '' : $datos['DIRECCION'],
+                $datos['CIUDAD'] == null ? '' : $datos['CIUDAD'],
+                $datos['SEXO'] == null ? '' : $datos['SEXO'],
+                $datos['OCUPACION'] == null ? '' : $datos['OCUPACION'],
+                $datos['TELEFONO'],
+                $datos['NACIMIENTO'] == null ? '' : $datos['NACIMIENTO'],
+                $datos['EDAD'] == null ? '' : $datos['EDAD'],
+                $datos['EMAIL'],
+                $datos['TIPO_PRECIO_VENTA'],
+                $datos['NOTA'] == null ? '' : $datos['NOTA'],
+                Password::hash($datos['DOCUMENTO']),
+            )->obj();
+            return (json_decode($users->JSON_ROW_OUT));
+            db()->close();
+        } catch (\Throwable $th) {
+            return ["STATUS" => FALSE, "MSG" => $th->getMessage()];
+        }
     }
 
     static function resetPassword($datos)

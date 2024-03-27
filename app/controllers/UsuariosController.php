@@ -10,7 +10,8 @@ class UsuariosController extends Controller
 {
     public function index()
     {
-        Usuarios::obtenerUsuarios();
+        $resp = Usuarios::obtenerUsuarios();
+        response()->json($resp);
     }
 
     public function obtenerUsuario()
@@ -30,31 +31,27 @@ class UsuariosController extends Controller
     {
         $validatedData = request()->validate([
             "ID" => ['required', 'number'],
-            "NOMBRE" => ['required', 'text'],
-            // "CONTRASENA" => ['required', 'min:5'],
-            "TIPO" => ['required', 'text', 'max:1'],
+            "NOMBRE" => [],
+            "DIRECCION" => [],
+            "CIUDAD" => [],
+            "SEXO" => [],
+            "OCUPACION" => [],
+            "TELEFONO" => [],
+            "NACIMIENTO" => [],
+            "EDAD" => [],
+            "EMAIL" => [],
+            "TIPO_PRECIO_VENTA" => [],
+            "NOTA" => [],
         ]);
         if (!$validatedData) {
             response()->json(request()->errors());
         } else {
             $datos = request()->body();
-            Usuarios::editarUsuario($datos);
+            $resp = Usuarios::editarUsuario($datos);
+            response()->json($resp);
         }
     }
 
-    public function CambiarEstadoUsuario()
-    {
-        $validatedData = request()->validate([
-            "ID" => ['required', 'number'],
-            "ESTADO" => ['required', 'text', 'max:1']
-        ]);
-        if (!$validatedData) {
-            response()->json(request()->errors());
-        } else {
-            $datos = request()->body();
-            Usuarios::CambiarEstadoUsuario($datos);
-        }
-    }
     // CONSULTAS CLIENTES
 
     public function obtenerClientes()
@@ -79,32 +76,36 @@ class UsuariosController extends Controller
     public function editarCliente()
     {
         $validatedData = request()->validate([
-            "ID_CLIENTE" => ['required', 'number', 'min:1'],
-            "NOMBRE" => ['required', 'text'],
-            "NEGOCIO" => ['required', 'alphaDash'],
-            "LICENCIAS" => ['required', 'number', 'min:1'],
-            "FECHA_FIN" => ['required', 'date'],
+            "ID" => ['required', 'number', 'min:1'],
+            "NOMBRE" => ['required'],
+            "DOCUMENTO" => ['required', 'number', 'min:1'],
+            "NEGOCIO" => ['required'],
+            "LICENCIA" => ['required', 'number', 'min:1'],
+            "FECHA_INICIO" => ['required', 'date'],
+            "FECHA_FIN" => ['required', 'date']
         ]);
         if (!$validatedData) {
             response()->json(request()->errors());
         } else {
             $datos = request()->body();
-            Usuarios::editarCliente($datos);
+            $resp = Usuarios::editarCliente($datos);
+            response()->json($resp);
         }
     }
 
-    public function CambiarEstadoCliente()
+    public function CambiarEstado()
     {
         $validatedData = request()->validate([
             "ID" => ['required', 'number'],
-            "ESTADO" => ['required', 'text']
-            // "ESTADO" => ['required', 'text', 'max:1']
+            "ESTADO" => ['required', 'text'],
+            "TABLA" => ['required']
         ]);
         if (!$validatedData) {
             response()->json(request()->errors());
         } else {
             $datos = request()->body();
-            Usuarios::CambiarEstadoCliente($datos);
+            $resp = Usuarios::CambiarEstado($datos);
+            response()->json($resp);
         }
     }
 }

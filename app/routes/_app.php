@@ -24,18 +24,20 @@ app()->group('/', function () {
 });
 
 app()->group('/', ['middleware' => 'verify-token', function () {
-    app()->get("/", 'UsuariosController@index');
+    app()->get("/usuarios", 'UsuariosController@index');
     app()->get("/usuario", 'UsuariosController@obtenerUsuario');
     app()->post("/editar-usuario", 'UsuariosController@editarUsuario');
-    app()->post("/estado-usuario", 'UsuariosController@CambiarEstadoUsuario');
     app()->get("/clientes", 'UsuariosController@obtenerClientes');
     app()->get("/cliente", 'UsuariosController@obtenerCliente');
     app()->post("/editar-cliente", 'UsuariosController@editarCliente');
-    app()->post("/estado-cliente", 'UsuariosController@CambiarEstadoCliente');
+    app()->post("/cambiar-estado", 'UsuariosController@CambiarEstado');
 }]);
 
 app()->group('/', function () {
-    app()->get("/excel", 'FilesController@conectFtp');
+    app()->post("/uploadfile", 'FilesController@index');
+    app()->get("/readfile", 'FilesController@readFile');
+    app()->post("/createtxt", 'FilesController@crearTXT');
+    app()->post("/createtxt2", 'FilesController@crearTXT2');
     app()->get("/tipodoc", 'UtilitiesController@obtenerTipoDocumento');
     app()->get("/tipolicencia", 'UtilitiesController@obtenerTipoLicencia');
 });

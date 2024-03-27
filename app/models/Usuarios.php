@@ -8,9 +8,13 @@ class Usuarios extends Model
 {
     static function obtenerUsuarios()
     {
-        $resp = db()->query('CALL OBTENER_USUARIOS()')->all();
-        response()->json($resp);
-        db()->close();
+        try {
+            $resp = db()->query("CALL OBTENER_USUARIOS()")->obj();
+            db()->close();
+            return json_decode($resp->JSON_ROW_OUT);
+        } catch (\Throwable $th) {
+            return ["STATUS" => FALSE, "MSG" => $th->getMessage()];
+        }
     }
 
     static function obtenerUsuario($id)
@@ -22,39 +26,36 @@ class Usuarios extends Model
 
     static function editarUsuario($datos)
     {
-        $resp = db()->query('CALL EDITAR_USUARIO(?,?,?)')->bind(
-            $datos["ID"],
-            $datos["NOMBRE"],
-            // $datos["CONTRASENA"],
-            $datos["TIPO"],
-        )->obj();
-        response()->json(json_decode($resp->JSON_ROW_OUT));
-        db()->close();
-    }
-
-    static function CambiarEstadoUsuario($datos)
-    {
-        $estado = $datos["ESTADO"] == "A" ? "I" : "A";
-        $resp = db()->query('CALL ACTIVAR_INACTIVAR_USU(?,?)')->bind(
-            $datos["ID"],
-            $estado
-        )->obj();
-        response()->json(json_decode($resp->JSON_ROW_OUT));
-        db()->close();
+        try {
+            $resp = db()->query('CALL EDITAR_USUARIO(?,?,?,?,?,?,?,?,?,?,?,?)')->bind(
+                $datos["ID"],
+                $datos["NOMBRE"],
+                $datos["DIRECCION"],
+                $datos["CIUDAD"],
+                $datos["SEXO"],
+                $datos["OCUPACION"],
+                $datos["TELEFONO"],
+                $datos["NACIMIENTO"],
+                $datos["EDAD"],
+                $datos["EMAIL"],
+                $datos["TIPO_PRECIO_VENTA"],
+                $datos["NOTA"]
+            )->obj();
+            return (json_decode($resp->JSON_ROW_OUT));
+            db()->close();
+        } catch (\Throwable $th) {
+            return ["STATUS" => FALSE, "MSG" => $th->getMessage()];
+        }
     }
 
     static function obtenerClientes()
     {
-        // $resp = db()->query('CALL OBTENER_CLIENTES()')->all();
-        // response()->json($resp);
-        // db()->close();
         try {
             $resp = db()->query("CALL OBTENER_CLIENTES()")->obj();
             db()->close();
-            // return $resp;
             return json_decode($resp->JSON_ROW_OUT);
         } catch (\Throwable $th) {
-            return $th->getMessage();
+            return ["STATUS" => FALSE, "MSG" => $th->getMessage()];
         }
     }
 
@@ -67,21 +68,41 @@ class Usuarios extends Model
 
     static function editarCliente($datos)
     {
-        $resp = db()->query('CALL EDITAR_CLIENTE(?,?,?,?,?)')->bind(
-            $datos["ID_CLIENTE"],
-            $datos["NOMBRE"],
-            $datos["NEGOCIO"],
-            $datos["LICENCIAS"],
-            $datos["FECHA_FIN"],
-        )->obj();
-        response()->json(json_decode($resp->JSON_ROW_OUT));
-        db()->close();
+        try {
+            $resp = db()->query('CALL EDITAR_CLIENTE(?,?,?,?,?)')->bind(
+                $datos["ID"],
+                $datos["NOMBRE"],
+                $datos["NEGOCIO"],
+                $datos["LICENCIA"],
+                $datos["FECHA_FIN"],
+            )->obj();
+            return response()->json(json_decode($resp->JSON_ROW_OUT));
+            db()->close();
+        } catch (\Throwable $th) {
+            return ["STATUS" => FALSE, "MSG" => $th->getMessage()];
+        }
     }
 
-    static function CambiarEstadoCliente($datos)
+    static function CambiarEstado($datos)
+    {
+        try {
+            $estado = $datos["ESTADO"] == "A" ? "I" : "A";
+            $resp = db()->query('CALL CAMBIAR_ESTADO(?,?,?)')->bind(
+                $datos["TABLA"],
+                $datos["ID"],
+                $estado
+            )->obj();
+            return (json_decode($resp->JSON_ROW_OUT));
+            db()->close();
+        } catch (\Throwable $th) {
+            return ["STATUS" => FALSE, "MSG" => $th->getMessage()];
+        }
+    }
+
+    static function CambiarEstadoUsuario($datos)
     {
         $estado = $datos["ESTADO"] == "A" ? "I" : "A";
-        $resp = db()->query('CALL CAMBIAR_ESTADO_CLIENTE(?,?)')->bind(
+        $resp = db()->query('CALL ACTIVAR_INACTIVAR_USU(?,?)')->bind(
             $datos["ID"],
             $estado
         )->obj();

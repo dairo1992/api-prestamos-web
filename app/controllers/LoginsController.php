@@ -23,6 +23,7 @@ class LoginsController extends Controller
 
   public function registrarCliente()
   {
+    // try {
     $validatedData = request()->validate([
       'NOMBRE' => ['required'],
       'TIPO_DOCUMENTO' => ['required', 'min:2', 'max:2'],
@@ -30,31 +31,49 @@ class LoginsController extends Controller
       'NEGOCIO' => ['required'],
       'LICENCIA' => ['required', 'number', 'min:1', 'max:2'],
       'FECHA_INICIO' => ['required', 'date'],
-      'FECHA_FIN' => ['required', 'date'],
-      'PASSWORD' => ['required']
+      'FECHA_FIN' => ['required', 'date']
     ]);
     if (!$validatedData) {
       response()->json(request()->errors());
     } else {
       $datos = request()->body();
-      Auth::registrarCliente($datos);
+      $resp = Auth::registrarCliente($datos);
+      response()->json($resp);
     }
+    // } catch (\Throwable $th) {
+    // response()->json("ERROR: " . $th->getMessage());
+    // }
   }
 
   public function registrarUsuario()
   {
-    $validatedData = request()->validate([
-      'CLIENTE' => ['required', 'number'],
-      'NOMBRE' => ['required'],
-      'USUARIO' => ['required'],
-      'PASSWORD' => ['required'],
-      'TIPO' => ['required', 'text', 'max:1'],
-    ]);
-    if (!$validatedData) {
-      response()->json(request()->errors());
-    } else {
-      $datos = request()->body();
-      Auth::registrarUsuario($datos);
+    try {
+      $validatedData = request()->validate([
+        'CLIENTE' => ['required', 'number'],
+        'NOMBRE' => ['required'],
+        'TIPO_DOCUMENTO' => ['required'],
+        'DOCUMENTO' => ['required', 'number'],
+        'DIRECCION' => [],
+        'CIUDAD' => [],
+        'SEXO' => [],
+        'OCUPACION' => [],
+        'TELEFONO' => ['required'],
+        'NACIMIENTO' => [],
+        'EDAD' => [],
+        'EMAIL' => [],
+        'TIPO_PRECIO_VENTA' => ['required'],
+        'NOTA' => [],
+      ]);
+      if (!$validatedData) {
+        response()->json(request()->errors());
+      } else {
+        $datos = request()->body();
+        $resp = Auth::registrarUsuario($datos);
+        response()->json($resp);
+      }
+    } catch (\Throwable $th) {
+      //throw $th;
+      return ["STATUS" => FALSE, "MSG" => $th->getMessage()];
     }
   }
 
